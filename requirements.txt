@@ -1,0 +1,24 @@
+# Core
+streamlit>=1.28.0
+streamlit-folium>=0.11.0
+numpy>=1.24.0
+opencv-python>=4.8.0
+ultralytics>=8.0.0
+python-dotenv>=1.0.0
+
+# Backend API
+fastapi>=0.104.0
+uvicorn>=0.24.0
+httpx>=0.25.0
+pydantic>=2.0.0
+python-multipart>=0.0.6
+
+# Maps
+folium>=0.14.0
+
+# Database
+postgrest>=0.29.0
+
+# Production
+gunicorn>=21.2.0
+whitenoise>=6.6.0

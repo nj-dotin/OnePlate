@@ -1,0 +1,24 @@
+[
+  {
+    "id": "hotspot_zone_b",
+    "zone": "Zone B",
+    "people_count": 6,
+    "persistence_minutes": 15,
+    "need_score": 66,
+    "priority": "MEDIUM",
+    "lat": 12.9721,
+    "lng": 77.593,
+    "time_detected": "2026-05-01T09:00:00+00:00"
+  },
+  {
+    "id": "hotspot_zone_c",
+    "zone": "Zone C",
+    "people_count": 9,
+    "persistence_minutes": 22,
+    "need_score": 98,
+    "priority": "HIGH",
+    "lat": 12.9694,
+    "lng": 77.5969,
+    "time_detected": "2026-05-01T09:05:00+00:00"
+  }
+]

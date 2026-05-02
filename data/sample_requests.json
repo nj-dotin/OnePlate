@@ -1,0 +1,14 @@
+[
+  {
+    "requester_name": "Shelter Block-4",
+    "quantity_needed": 18,
+    "lat": 12.9712,
+    "lng": 77.5941
+  },
+  {
+    "requester_name": "Community Point-2",
+    "quantity_needed": 12,
+    "lat": 12.9698,
+    "lng": 77.5960
+  }
+]
