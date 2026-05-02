@@ -433,6 +433,43 @@ python scripts/run_yolo.py --video video/sample.mp4 --out data/hotspots.generate
 
 Then in the UI you can use `Realtime YOLO` mode.
 
+🎯 Demo Flow
+
+1. Load hotspots (fallback / YOLO)  
+2. Add food listing  
+3. Add hunger request  
+4. Smart match + dispatch  
+5. OTP verify  
+6. View dashboard impact  
+
+⚠️ Ethics
+
+- 🚫 No individual identification  
+- ✅ Area-level detection only  
+- 🚫 No misuse of AI  
+- ✅ Responsible AI usage  
+
+🌍 Impact
+
+✔ Reduces food waste  
+✔ Enables proactive hunger detection  
+✔ Improves NGO coordination  
+✔ Provides real-time transparency  
+
+🏆 Why It Stands out
+
+✔ **YOLO + Real-time system + Social Impact**  
+✔ Predictive (not reactive)  
+✔ Complete working pipeline  
+✔ Scalable to real-world deployment  
+
+ 🔥 Final Pitch
+
+> “OnePlate uses AI to detect hunger before it becomes visible,  
+> and delivers food before it becomes waste.”
+
+---
+
 ## Important Pitch Notes
 
 - Do not claim direct tax deduction implementation in MVP.
