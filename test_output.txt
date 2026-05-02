@@ -1,0 +1,55 @@
+≡ƒÄ¼ Processing video: beg_2.mp4
+============================================================
+[DEBUG] Starting extract_frames...
+[DEBUG] Frames extracted: 50
+Γ£à Extracted 50 frames
+============================================================
+[DEBUG] Starting detect_hotspots_from_frames...
+[DEBUG] Hotspots detected: 10
+≡ƒöÑ Detected 10 hotspots from YOLO
+============================================================
+Hotspot 1:
+  Cluster Size: 50
+  Classes: ['person']
+  People Detections: 50
+Hotspot 2:
+  Cluster Size: 17
+  Classes: ['person']
+  People Detections: 17
+Hotspot 3:
+  Cluster Size: 77
+  Classes: ['person']
+  People Detections: 77
+Hotspot 4:
+  Cluster Size: 49
+  Classes: ['person']
+  People Detections: 49
+Hotspot 5:
+  Cluster Size: 4
+  Classes: ['cup', 'person']
+  People Detections: 2
+Hotspot 6:
+  Cluster Size: 4
+  Classes: ['person']
+  People Detections: 4
+Hotspot 7:
+  Cluster Size: 33
+  Classes: ['person']
+  People Detections: 33
+Hotspot 8:
+  Cluster Size: 1
+  Classes: ['cup']
+  People Detections: 0
+Hotspot 9:
+  Cluster Size: 7
+  Classes: ['person']
+  People Detections: 7
+Hotspot 10:
+  Cluster Size: 2
+  Classes: ['person']
+  People Detections: 2
+[DEBUG] Starting upload_frames_to_supabase...
+[DEBUG] Upload result: False, error: Supabase client unavailable
+Γ¥î Upload error: Supabase client unavailable
+============================================================
+≡ƒÄë Video processing complete!

@@ -1132,6 +1132,129 @@ def route_optimization_panel(store: PHRSStore) -> None:
         st.markdown("</div>", unsafe_allow_html=True)
 
 
+def video_upload_panel(store: PHRSStore) -> None:
+    """Video upload and zone detection panel with YOLO analysis."""
+    section_header("Video Upload & Zone Detection", "Upload videos to detect demand hotspots, crowd zones, and threats using AI vision.")
+    
+    from app.video_processor import VideoProcessor
+    
+    st.markdown('<div class="op-card">', unsafe_allow_html=True)
+    st.markdown("### 📹 Upload Video")
+    
+    video_file = st.file_uploader("Choose a video file", type=["mp4", "avi", "mov", "mkv", "flv"])
+    
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        fps_sample = st.slider("Frame sampling (every Nth frame)", 1, 10, 2)
+    with col2:
+        max_frames = st.slider("Max frames to extract", 5, 50, 20)
+    with col3:
+        model_choice = st.selectbox("YOLO Model", ["yolov8n.pt", "yolov8s.pt", "yolov8m.pt"], index=0)
+    
+    st.markdown("</div>", unsafe_allow_html=True)
+    
+    if video_file and st.button("🔍 Analyze Video & Detect Zones", type="primary"):
+        st.info("Processing video... This may take a minute.")
+        progress_bar = st.progress(0)
+        
+        try:
+            # Initialize processor
+            processor = VideoProcessor(model_name=model_choice)
+            progress_bar.progress(10)
+            
+            # Extract frames
+            st.write("📸 Extracting frames...")
+            frames = processor.extract_frames(video_file.getvalue(), fps_sample=fps_sample, max_frames=max_frames)
+            progress_bar.progress(40)
+            
+            if not frames:
+                st.error(f"Could not extract frames: {processor.last_error}")
+                return
+            
+            st.success(f"✅ Extracted {len(frames)} frames")
+            
+            # Detect hotspots
+            st.write("🎯 Detecting hotspots from zones...")
+            hotspots = processor.detect_hotspots_from_frames(frames)
+            progress_bar.progress(70)
+            
+            if hotspots:
+                st.success(f"✅ Detected {len(hotspots)} hotspot zones")
+            else:
+                st.warning("No significant hotspots detected (try adjusting model or frame count)")
+            
+            # Upload to Supabase
+            st.write("☁️ Uploading to cloud...")
+            video_name = video_file.name.replace(".", "_")
+            success, error = processor.upload_frames_to_supabase(frames, hotspots, video_name)
+            progress_bar.progress(100)
+            
+            if success:
+                st.success("✅ Video analysis uploaded to Supabase!")
+            else:
+                st.warning(f"Partial upload: {error}")
+            
+            # Display results
+            st.markdown('<div class="op-card">', unsafe_allow_html=True)
+            st.markdown(f"### Results: {len(frames)} Frames Analyzed, {len(hotspots)} Hotspots Detected")
+            
+            # Show frame summaries with zones
+            st.markdown("#### Frame Analysis Summary")
+            frame_data_display = []
+            for frame in frames[:15]:
+                frame_data_display.append({
+                    "Frame": frame['frame_index'],
+                    "Time (ms)": frame['timestamp_ms'],
+                    "People": frame['people_count'],
+                    "Zones": len(frame['zones']),
+                    "Classes": ", ".join(frame['detected_classes']),
+                })
+            
+            if frame_data_display:
+                st.dataframe(frame_data_display, use_container_width=True, hide_index=True)
+            
+            # Hotspot summary
+            st.markdown("#### Detected Hotspots (Persistent Zones)")
+            hotspot_data = []
+            for hs in hotspots[:10]:
+                hotspot_data.append({
+                    "Hotspot ID": hs['id'][:12] + "...",
+                    "People": hs.get('people_detections', 0),
+                    "Frames": hs.get('persistence_frames', 0),
+                    "Confidence": round(hs.get('avg_confidence', 0), 2),
+                    "Classes": ", ".join(hs.get('detected_classes', [])),
+                })
+            
+            if hotspot_data:
+                st.dataframe(hotspot_data, use_container_width=True, hide_index=True)
+            else:
+                st.info("No persistent hotspots detected")
+            
+            # Load hotspots into store
+            if hotspots:
+                for hs in hotspots:
+                    store.hotspots.append({
+                        'id': hs['id'],
+                        'zone': f"{hs['id']}",
+                        'people_count': hs.get('people_detections', 0),
+                        'persistence_minutes': int(hs.get('persistence_frames', 0) / 10),
+                        'need_score': int(hs.get('people_detections', 0) * 100),
+                        'priority': "HIGH" if hs.get('people_detections', 0) > 5 else "MEDIUM",
+                        'lat': 12.9734 + (hs['bbox']['x1'] * 0.01),
+                        'lng': 77.5964 + (hs['bbox']['y1'] * 0.01),
+                        'time_detected': datetime.now(timezone.utc).isoformat(),
+                    })
+                
+                st.success(f"✅ Loaded {len(hotspots)} hotspots into demand system!")
+            
+            st.markdown("</div>", unsafe_allow_html=True)
+        
+        except Exception as e:
+            st.error(f"Error processing video: {e}")
+            import traceback
+            st.text(traceback.format_exc())
+
+
 def main() -> None:
     st.set_page_config(page_title=f"{APP_NAME} Dashboard", page_icon="🍱", layout="wide")
     inject_styles()
@@ -1144,6 +1267,7 @@ def main() -> None:
             "Overview",
             "Restaurant",
             "Demand Hotspots",
+            "Video Upload",
             "Requests",
             "NGO Inbox",
             "Matching + Dispatch",
@@ -1160,6 +1284,8 @@ def main() -> None:
         restaurant_panel(store)
     elif tab == "Demand Hotspots":
         load_hotspots_ui(store)
+    elif tab == "Video Upload":
+        video_upload_panel(store)
     elif tab == "Requests":
         request_panel(store)
     elif tab == "NGO Inbox":

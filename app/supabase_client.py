@@ -361,3 +361,27 @@ class SupabaseOps:
             return sum(row.get("credits_added", 0) for row in resp.data)
         except Exception:
             return 0
+
+    # ============= HOTSPOTS =============
+    def list_hotspots(self) -> list[dict[str, Any]]:
+        try:
+            resp = self.client.table("hotspots").select("*").order("created_at", desc=True).execute()
+            return resp.data if resp.data else []
+        except Exception:
+            return []
+
+    def create_hotspot(self, hotspot: dict[str, Any]) -> dict[str, Any] | None:
+        try:
+            self.last_error = None
+            resp = self.client.table("hotspots").insert(hotspot).execute()
+            return resp.data[0] if resp.data else None
+        except Exception as exc:
+            self._set_error(exc)
+            return None
+
+    def get_hotspot(self, hotspot_id: str) -> dict[str, Any] | None:
+        try:
+            resp = self.client.table("hotspots").select("*").eq("id", hotspot_id).execute()
+            return resp.data[0] if resp.data else None
+        except Exception:
+            return None
